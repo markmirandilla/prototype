@@ -1,12 +1,13 @@
-CREATE DATABASE IF NOT EXIST test CHARACTER SET utf COLLATE utf8_general_ci;
 
-use test;
+CREATE DATABASE IF NOT EXISTS test CHARACTER SET utf8 COLLATE utf8_general_ci;
+
+use 'test';
 
 --
 -- Table structure for table `accounts`
 --
 
-CREATE TABLE IF NOT EXISTS `test`.`accounts` (
+CREATE TABLE IF NOT EXISTS `accounts` (
 `account_id` BIGINT( 20 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
 `country_id` BIGINT( 20 ) NOT NULL ,
 `account_name` VARCHAR( 255 ) NOT NULL ,
@@ -23,10 +24,44 @@ UNIQUE (
 ) ENGINE = MYISAM CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT =  'Customer Accounts';
 
 --
--- Table structure for table `country_t`
+-- Table structure for table `account_contracts`
 --
+CREATE TABLE IF NOT EXISTS `account_contracts` (
+`account_id` BIGINT( 20 ) NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+`account_type_id` TINYINT( 11 ) NOT NULL ,
+`start_date` DATETIME NULL DEFAULT NULL ,
+`expiry_date` DATETIME NULL DEFAULT NULL ,
+`date_created` DATETIME NULL DEFAULT NULL ,
+`date_updated` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+`remarks` TEXT NULL DEFAULT NULL ,
+INDEX (  `account_type_id` )
+) ENGINE = MYISAM CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT =  'contracts for each account';
 
-CREATE TABLE IF NOT EXISTS `test`.`countries` (
+--
+-- Table structure for table `account_types`
+--
+DROP TABLE IF EXISTS `account_types`;
+CREATE TABLE IF NOT EXISTS `account_types` (
+`account_type_id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+`account_type_name` VARCHAR( 45 ) NOT NULL ,
+`account_emp_limit` INT( 11 ) NOT NULL DEFAULT  '0',
+`date_created` DATETIME NULL DEFAULT NULL ,
+`date_updated` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+`remarks` TEXT NULL DEFAULT NULL
+) ENGINE = MYISAM CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT =  'type of account if free, starter, professional etc...';
+
+--
+-- Dumping data for table `account_types`
+--
+INSERT INTO `account_types` (`account_type_id`,`account_type_name`, `account_emp_limit`, `date_created`) VALUES
+(1,'Starter',30,now()),
+(2,'Professional',0,now());
+
+--
+-- Table structure for table `countries`
+--
+DROP TABLE IF EXISTS `countries`;
+CREATE TABLE IF NOT EXISTS `countries` (
   `country_id` int(5) NOT NULL AUTO_INCREMENT,
   `iso2` char(2) DEFAULT NULL,
   `short_name` varchar(80) NOT NULL DEFAULT '',
@@ -40,10 +75,10 @@ CREATE TABLE IF NOT EXISTS `test`.`countries` (
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=251 ;
 
 --
--- Dumping data for table `country_t`
+-- Dumping data for table `countries`
 --
 
-INSERT INTO `test`.`countries` (`country_id`, `iso2`, `short_name`, `long_name`, `iso3`, `numcode`, `un_member`, `calling_code`, `cctld`) VALUES
+INSERT INTO `countries` (`country_id`, `iso2`, `short_name`, `long_name`, `iso3`, `numcode`, `un_member`, `calling_code`, `cctld`) VALUES
 (1, 'AF', 'Afghanistan', 'Islamic Republic of Afghanistan', 'AFG', '004', 'yes', '93', '.af'),
 (2, 'AX', 'Aland Islands', '&Aring;land Islands', 'ALA', '248', 'no', '358', '.ax'),
 (3, 'AL', 'Albania', 'Republic of Albania', 'ALB', '008', 'yes', '355', '.al'),
